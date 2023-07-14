@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
   users: User[] = [];
 
-  create({ name, email, password, avatar }: User) {
+  create({ name, email, password, avatar }: CreateUserDto) {
     const user = new User(name, email, password, avatar);
     return this.users.push(user);
   }

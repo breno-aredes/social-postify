@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 
 export class User {
   constructor(
@@ -6,16 +6,8 @@ export class User {
     private _email: string,
     private _password: string,
     private _avatar: string,
-  ) {
-    this.name = _name;
-  }
-
-  set name(name: string) {
-    if (!name || name.trim().length === 0) {
-      throw new HttpException('Invalid Name', HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-    this._name = name;
-  }
+    readonly id: string = randomUUID(),
+  ) {}
 
   get name() {
     return this._name;
