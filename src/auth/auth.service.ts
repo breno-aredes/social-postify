@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthSigninDTO } from './dto/auth-signin.dto';
 import { UsersService } from 'src/users/users.service';
 import { AuthSignUpDTO } from './dto/auth-signup.dto';
@@ -9,6 +13,9 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
+  private AUDIENCE: string = 'users';
+  private ISSUER: string = 'social postify';
+
   constructor(
     private readonly usersService: UsersService,
     private readonly usersRepository: UsersRepository,
@@ -40,11 +47,24 @@ export class AuthService {
       {
         expiresIn: '7 days',
         subject: String(user.id),
-        issuer: 'social postify',
-        audience: 'users',
+        audience: this.AUDIENCE,
+        issuer: this.ISSUER,
       },
     );
 
     return { token };
+  }
+
+  checkeToken(token: string) {
+    try {
+      const data = this.jwtService.verify(token, {
+        audience: this.AUDIENCE,
+        issuer: this.ISSUER,
+      });
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error);
+    }
   }
 }

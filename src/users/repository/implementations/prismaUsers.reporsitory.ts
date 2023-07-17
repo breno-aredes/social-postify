@@ -11,7 +11,15 @@ export class PrismaUsersRepository {
   }
 
   async findAll() {
-    return await this.prisma.user.findMany({});
+    return await this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        avatar: true,
+        email: true,
+        createdAt: true,
+      },
+    });
   }
 
   async findUserByEmail(email: string) {
@@ -20,5 +28,9 @@ export class PrismaUsersRepository {
         email: email,
       },
     });
+  }
+
+  async findUserById(id: number) {
+    return await this.prisma.user.findFirst({ where: { id } });
   }
 }
