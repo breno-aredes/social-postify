@@ -6,7 +6,20 @@ import { CreatePublicationDto } from 'src/publication/dto/create-publication.dto
 export class PrismaPublicationRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreatePublicationDto) {
-    return await this.prisma.post.create({ data: data });
+  async create(data: Omit<CreatePublicationDto, 'userId'>, userId: number) {
+    return await this.prisma.post.create({
+      data: {
+        ...data,
+        user: { connect: { id: userId } },
+      },
+    });
+  }
+
+  async findByUserId(userId: number) {
+    return await this.prisma.post.findMany({ where: { userId: userId } });
+  }
+
+  async findByTitle(title: string) {
+    return await this.prisma.post.findFirst({ where: { title } });
   }
 }

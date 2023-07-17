@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreatePublicationDto } from './dto/create-publication.dto';
 import { PublicationRepository } from './repository/publications.repository';
 
@@ -6,12 +6,18 @@ import { PublicationRepository } from './repository/publications.repository';
 export class PublicationService {
   constructor(private readonly publicationRepository: PublicationRepository) {}
 
-  async create(createPublication: CreatePublicationDto) {
-    return await this.publicationRepository.create(createPublication);
+  async create(createPublication: CreatePublicationDto, userId: number) {
+    const post = await this.publicationRepository.findByTitle(
+      createPublication.title,
+    );
+
+    if (post) throw new ConflictException('Title already registered.');
+
+    return await this.publicationRepository.create(createPublication, userId);
   }
 
-  findAll() {
-    return `This action returns all publication`;
+  async findAllByUser(userId: number) {
+    return await this.publicationRepository.findByUserId(userId);
   }
 
   findOne(id: number) {

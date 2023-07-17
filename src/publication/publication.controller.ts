@@ -11,6 +11,8 @@ import {
 import { PublicationService } from './publication.service';
 import { CreatePublicationDto } from './dto/create-publication.dto';
 import { AuthGuard } from 'src/auth/authGuard/auth.guard';
+import { User } from '@prisma/client';
+import { User as UserRequest } from 'src/auth/decorators/user.decorators';
 
 @Controller('publication')
 export class PublicationController {
@@ -18,14 +20,17 @@ export class PublicationController {
 
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createPublicationDto: CreatePublicationDto) {
-    return this.publicationService.create(createPublicationDto);
+  create(
+    @Body() createPublicationDto: CreatePublicationDto,
+    @UserRequest() user: User,
+  ) {
+    return this.publicationService.create(createPublicationDto, user.id);
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.publicationService.findAll();
+  findAllByUser(@UserRequest() user: User) {
+    return this.publicationService.findAllByUser(user.id);
   }
 
   @Get(':id')
