@@ -15,8 +15,25 @@ model User {
   name      String
   password  String
   avatar    String
-  email     String @unique
+  email     String   @unique
   createdAt DateTime @default(now())
+  posts     Post[]
 
   @@map("users")
+}
+
+model Post {
+  id            Int      @id @default(autoincrement())
+  image         String
+  title         String   @unique
+  text          String
+  dateToPublish String
+  published     Boolean  @default(false)
+  socialMedia   String
+  userId        Int
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("posts")
 }

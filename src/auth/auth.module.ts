@@ -5,6 +5,7 @@ import { UsersRepository } from 'src/users/repository/users.repository';
 import { PrismaUsersRepository } from 'src/users/repository/implementations/prismaUsers.reporsitory';
 import { UsersService } from 'src/users/users.service';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthGuard } from './authGuard/auth.guard';
 
 @Module({
   imports: [
@@ -20,6 +21,8 @@ import { JwtModule } from '@nestjs/jwt';
       provide: UsersRepository,
       useClass: PrismaUsersRepository,
     },
+    AuthGuard,
   ],
+  exports: [AuthGuard, AuthService],
 })
 export class AuthModule {}
